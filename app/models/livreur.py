@@ -11,3 +11,4 @@ class Livreur(Base):
     telephone = Column(String, nullable=False, index=True)
     ville = Column(String, nullable=False, index=True)
     colis = relationship("Colis", back_populates="livreur")
+    zone = Column(String, nullable=False, index=True)
