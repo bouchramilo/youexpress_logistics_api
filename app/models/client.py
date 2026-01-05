@@ -1,7 +1,7 @@
 from pydantic import BaseModel as base
 from sqlalchemy import Column, Integer, String
 from app.core.database import Base
-from sqlalchemy.prm import relationship
+from sqlalchemy.orm import relationship
 
 
 class Client(base):
