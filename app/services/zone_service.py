@@ -8,3 +8,6 @@ def create_zone(db: Session, zone:ZoneCreate):
     db.commit()
     db.refresh(db_zone)
     return db_zone
+
+def get_all_zones(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Zone).offset(skip).limit(limit).all()
