@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from app.core.database import Base
-from sqlalchemy.orm import relationship 
 
 class Livreur(Base):
     __tablename__ = "livreurs"
@@ -10,5 +10,5 @@ class Livreur(Base):
     email = Column(String, nullable=False, index=True)
     telephone = Column(String, nullable=False, index=True)
     ville = Column(String, nullable=False, index=True)
-    colis = relationship("Colis", back_populates="livreur")
     zone = Column(String, nullable=False, index=True)
+    colis_assignes = relationship("Colis", back_populates="livreur")
