@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from app.routers import zone_router
+
 
 app = FastAPI(title="YouExpress Logistics API", version="1.0.0")
 
@@ -9,3 +11,6 @@ def read_root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
+
+app.include_router(zone_router.router)
+
