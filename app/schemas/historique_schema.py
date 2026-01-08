@@ -11,7 +11,6 @@ class HistoriqueBase(BaseModel):
     livreur_id: int
     
 class HistoriqueCreate(BaseModel):
-    ancien_statut: Optional[str] = ""
     nouveau_statut: str
     colis_id: int
     livreur_id: int
