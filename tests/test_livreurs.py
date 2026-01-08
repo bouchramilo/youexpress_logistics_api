@@ -16,6 +16,6 @@ def test_create_livreur(client):
     assert response.status_code == 201
     data = response.json()
     assert data["nom"] == "Sanae"
-    # assert "id" in data
+  
     
     
