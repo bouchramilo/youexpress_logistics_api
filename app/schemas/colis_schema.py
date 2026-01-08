@@ -30,6 +30,9 @@ class ColisResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class ColisUpdate(BaseModel):
-    statut : Optional[str]
-    zone_id : int
-    livreur_id : int
+    statut: Optional[str] = None
+    zone_id: Optional[int] = None
+    livreur_id: Optional[int] = None
+
+class ColisAssign(BaseModel):
+    livreur_id: int
