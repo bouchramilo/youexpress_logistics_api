@@ -4,15 +4,16 @@ from app.schemas.colis_schema import ColisCreate
 from app.schemas.colis_schema import ColisUpdate
 from datetime import datetime
 
-def create_colis(db: Session , colis: ColisCreate):
+def create_colis(db: Session, colis: ColisCreate):
     db_colis = Colis(
-    description = colis.description,
-    poids = colis.poids,
-    statut = colis.statut,
-    ville_destination = colis.ville_destination,
-    date_creation = datetime.now(),
-    client_id = colis.client_id,
-    
+        
+        description=colis.description,
+        poids=colis.poids,
+        statut=colis.statut,
+        ville_destination=colis.ville_destination,
+        date_creation=datetime.now(),
+        client_id=colis.client_id,
+        destinataire_id=colis.destinataire_id  
     )
     db.add(db_colis)
     db.commit()

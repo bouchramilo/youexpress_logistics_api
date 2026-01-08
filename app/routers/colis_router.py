@@ -7,9 +7,9 @@ from app.core.database import get_db
 router = APIRouter(prefix='/colis' , tags=['colis'])
 
 @router.post('/')
-def create_colis(colis : ColisCreate , db : Session = Depends(get_db) ):
+def update_colis(colis : ColisCreate , db : Session = Depends(get_db)):
     return create_colis(db = db ,  colis = colis)
 
 @router.patch('/id')
-def update_colis(colis : ColisUpdate , db : Session = Depends[get_db]):
+def update_colis(colis : ColisUpdate , db : Session = Depends(get_db)):
     return update_colis(db = db , colis= colis)

@@ -13,7 +13,7 @@ class Colis(Base):
     ville_destination = Column(String, nullable=False)
     date_creation = Column(DateTime(timezone=True), server_default=func.now())
     client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
-    zone_id = Column(Integer, ForeignKey("zones.id"), nullable=False)
+    zone_id = Column(Integer, ForeignKey("zones.id"), nullable=True)
     destinataire_id = Column(Integer, ForeignKey("destinataires.id"), nullable=False)
     livreur_id = Column(Integer, ForeignKey("livreurs.id"), nullable=True)
     client = relationship("Client", back_populates="colis")
