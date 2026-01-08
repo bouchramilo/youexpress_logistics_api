@@ -17,13 +17,15 @@ class ColisCreate(BaseModel):
 
 class ColisResponse(BaseModel):
     id: int
-    description: str
+    description: Optional[str]
     poids: float
     statut: str
     ville_destination: str
     date_creation: datetime
     client_id: int
     destinataire_id: int
+    zone_id: Optional[int] = None
+    livreur_id: Optional[int] = None
 
     model_config = ConfigDict(from_attributes=True)
 

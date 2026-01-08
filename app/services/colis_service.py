@@ -3,10 +3,11 @@ from app.models.colis import Colis
 from app.schemas.colis_schema import ColisCreate
 from app.schemas.colis_schema import ColisUpdate
 from datetime import datetime
+from typing import Optional, List
 
 def create_colis(db: Session, colis: ColisCreate):
     db_colis = Colis(
-        
+
         description=colis.description,
         poids=colis.poids,
         statut=colis.statut,
@@ -15,6 +16,7 @@ def create_colis(db: Session, colis: ColisCreate):
         client_id=colis.client_id,
         destinataire_id=colis.destinataire_id  
     )
+
     db.add(db_colis)
     db.commit()
     db.refresh(db_colis)
@@ -28,6 +30,46 @@ def update_colis(db : Session , colis_id : int ,  colis : ColisUpdate):
     update_data = colis.model_dump(exclude_unset=True)
     for key , value in update_data:
         setattr(db_colis , key , value)
+    
+    db.commit()
+    db.refresh(db_colis)
+    return db_colis
+
+
+def get_all_colis(db: Session, statut: Optional[str] = None, zone_id: Optional[int] = None) -> List[Colis]:
+    query = db.query(Colis)
+    
+    if statut:
+        query = query.filter(Colis.statut == statut)
+    
+    if zone_id:
+        query = query.filter(Colis.zone_id == zone_id)
+        
+    return query.all()
+
+def get_colis_by_id(db: Session, colis_id: int):
+    return db.query(Colis).filter(Colis.id == colis_id).first()
+
+def update_colis(db: Session, colis_id: int, colis_update: ColisUpdate):
+    db_colis = db.query(Colis).filter(Colis.id == colis_id).first()
+    if not db_colis:
+        return None
+    
+    update_data = colis_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_colis, key, value)
+    
+    db.commit()
+    db.refresh(db_colis)
+    return db_colis
+
+def assign_livreur_to_colis(db: Session, colis_id: int, livreur_id: int):
+    db_colis = db.query(Colis).filter(Colis.id == colis_id).first()
+    if not db_colis:
+        return None
+    
+    db_colis.livreur_id = livreur_id
+    db_colis.statut = "EN_TRANSIT" 
     
     db.commit()
     db.refresh(db_colis)
