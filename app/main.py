@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from app.routers import zone_router, livreur_router , colis_router , destinataire 
+
+from app.routers import zone_router, livreur_router , colis_router , destinataire , historique_router
 
 from app.routers import client_router
 from app.core.database import engine, Base
@@ -12,6 +13,7 @@ app = FastAPI(title="YouExpress Logistics API", version="1.0.0")
 app.include_router(client_router.router)
 app.include_router(zone_router.router)
 app.include_router(livreur_router.router)
+app.include_router(historique_router.router)
 app.include_router(colis_router.router)
 app.include_router(destinataire.router)
 
