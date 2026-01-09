@@ -14,7 +14,7 @@ from app.services import colis_service
 
 router = APIRouter(prefix='/colis' , tags=['colis'])
 
-@router.post('/')
+@router.post('/', response_model=ColisResponse) # j'ai ajouté le response_model ici ---> bouchra
 def update_colis(colis : ColisCreate , db : Session = Depends(get_db)):
     return create_colis(db = db ,  colis = colis)
 
