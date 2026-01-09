@@ -29,8 +29,8 @@ def test_create_colis(client):
         "poids": 2.5,
         "statut": "PENDING",
         "ville_destination": "Tanger",
-        "client_id": client_id,         # Link to the client we just made
-        "destinataire_id": destinataire_id # Link to the destinataire we just made
+        "client_id": client_id,        
+        "destinataire_id": destinataire_id 
     }
 
     colis_response = client.post("/colis/", json=colis_data)

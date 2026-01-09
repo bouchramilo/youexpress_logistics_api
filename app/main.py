@@ -39,3 +39,30 @@ def health_check():
     return {"status": "healthy"}
 
 
+
+
+from fastapi import FastAPI , requests , status
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import IntegrityError
+from app.core.exceptions import BusinessException
+
+app = FastAPI()
+
+@app.exception_handler(BusinessException)
+def business_exception_handler(request: requests.Request, exc: BusinessException):
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": exc.message}
+    )
+@app.exception_handler(IntegrityError)
+def integrity_exception_handler(request: requests.Request, exc: IntegrityError):
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": "Database integrity error: " + str(exc.orig)}
+    )
+@app.exception_handler(Exception)
+def general_exception_handler(request: requests.Request, exc: Exception):
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": "An unexpected error occurred: " + str(exc)}
+    )
