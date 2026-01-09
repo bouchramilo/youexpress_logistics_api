@@ -9,6 +9,17 @@ from app.core.logging_config import get_logger
 logger = get_logger("historique_router")
 
 router = APIRouter(prefix="/colis", tags=["historiques"])
+historique_router = APIRouter(prefix="/historique", tags=["historiques"])
+
+@historique_router.get("/", response_model=List[Historique])
+def get_all_historiques(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    logger.debug("Demande de récupération de tous les historiques")
+    return historique_service.get_all_historiques(db=db, skip=skip, limit=limit)
+
+@historique_router.get("/{historique_id}", response_model=Historique)
+def get_historique(historique_id: int, db: Session = Depends(get_db)):
+    logger.debug(f"Demande de récupération de l'historique {historique_id}")
+    return historique_service.get_historique_by_id(db=db, historique_id=historique_id)
 
 # add historique status d'un colis
 @router.post("/{colis_id}/historiques", response_model=Historique, status_code=201)

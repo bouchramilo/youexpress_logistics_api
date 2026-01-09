@@ -53,4 +53,18 @@ def index_historiques(db: Session, colis_id: int):
     logger.debug(f"Trouvé {len(historiques)} historiques pour le colis {colis_id}")
     return historiques
 
+def get_all_historiques(db: Session, skip: int = 0, limit: int = 100):
+    logger.debug(f"Récupération de tous les historiques (skip={skip}, limit={limit})")
+    historiques = db.query(HistoriqueStatut).offset(skip).limit(limit).all()
+    logger.debug(f"{len(historiques)} historiques récupérés")
+    return historiques
+
+def get_historique_by_id(db: Session, historique_id: int):
+    logger.debug(f"Recherche de l'historique avec l'id {historique_id}")
+    db_historique = db.query(HistoriqueStatut).filter(HistoriqueStatut.id == historique_id).first()
+    if not db_historique:
+        logger.warning(f"Historique avec l'id {historique_id} introuvable")
+        raise BusinessException("HISTORIQUE_NOT_FOUND", f"Historique avec l'id {historique_id} n'existe pas")
+    return db_historique
+
 
