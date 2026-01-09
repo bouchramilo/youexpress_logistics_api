@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.colis import Colis
+from app.models.historique import HistoriqueStatut
 from app.schemas.colis_schema import ColisCreate
 from app.schemas.colis_schema import ColisUpdate
 from datetime import datetime
@@ -20,6 +21,20 @@ def create_colis(db: Session, colis: ColisCreate):
     db.add(db_colis)
     db.commit()
     db.refresh(db_colis)
+    
+    # ###############################################""
+    # cette partie pour l'ajout automatique de historique lors la crééation de colis
+    # Créer automatiquement un historique avec le statut "CREE"
+    historique = HistoriqueStatut(
+        ancien_statut=None,
+        nouveau_statut="CREE",
+        colis_id=db_colis.id,
+        livreur_id=None
+    )
+    db.add(historique)
+    db.commit()
+    # ###############################################""
+    
     return db_colis
 
 
