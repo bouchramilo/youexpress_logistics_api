@@ -1,10 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import IntegrityError
 from app.routers import zone_router, livreur_router, colis_router, destinataire, historique_router, gestionaire
 from app.routers import client_router
 from app.core.database import engine, Base
 from app.models import Client, Colis, Destinataire, Livreur, Zone, HistoriqueStatut
 from app.core.logging_config import get_logger
 from app.core.middleware import logging_middleware
+from app.core.exceptions import BusinessException
 
 # Initialiser le logger
 logger = get_logger("main")
@@ -39,29 +42,26 @@ def health_check():
     return {"status": "healthy"}
 
 
-
-
-from fastapi import FastAPI , requests , status
-from fastapi.responses import JSONResponse
-from sqlalchemy.exc import IntegrityError
-from app.core.exceptions import BusinessException
-
-app = FastAPI()
-
+# Exception Handlers
 @app.exception_handler(BusinessException)
-def business_exception_handler(request: requests.Request, exc: BusinessException):
+def business_exception_handler(request: Request, exc: BusinessException):
+    logger.warning(f"Business exception: {exc.message}")
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
         content={"detail": exc.message}
     )
+
 @app.exception_handler(IntegrityError)
-def integrity_exception_handler(request: requests.Request, exc: IntegrityError):
+def integrity_exception_handler(request: Request, exc: IntegrityError):
+    logger.error(f"Database integrity error: {exc.orig}")
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
         content={"detail": "Database integrity error: " + str(exc.orig)}
     )
+
 @app.exception_handler(Exception)
-def general_exception_handler(request: requests.Request, exc: Exception):
+def general_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unexpected error: {exc}")
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"detail": "An unexpected error occurred: " + str(exc)}

@@ -2,12 +2,19 @@ from sqlalchemy.orm import Session
 from app.models.historique import HistoriqueStatut
 from app.schemas.historique_schema import HistoriqueCreate, HistoriqueUpdate
 from app.core.logging_config import get_logger
+from app.core.exceptions import BusinessException
 
 logger = get_logger("historique_service")
 
 
 def create_historique(db: Session, colis_id: int, historique: HistoriqueCreate):
     logger.info(f"Création d'un nouvel historique pour le colis {colis_id} avec le statut '{historique.nouveau_statut}'")
+    
+    if not historique.nouveau_statut:
+        raise BusinessException("INVALID_STATUS", "Le nouveau statut est requis")
+    
+    if colis_id <= 0:
+        raise BusinessException("INVALID_COLIS_ID", "L'id du colis doit être supérieur à 0")
     
     # Récupérer le dernier historique du colis pour mettre à jour l'ancien_statut
     dernier_historique = db.query(HistoriqueStatut).filter(
@@ -38,6 +45,10 @@ def create_historique(db: Session, colis_id: int, historique: HistoriqueCreate):
 
 def index_historiques(db: Session, colis_id: int):
     logger.debug(f"Récupération de tous les historiques pour le colis {colis_id}")
+    
+    if colis_id <= 0:
+        raise BusinessException("INVALID_COLIS_ID", "L'id du colis doit être supérieur à 0")
+    
     historiques = db.query(HistoriqueStatut).filter(HistoriqueStatut.colis_id == colis_id).all()
     logger.debug(f"Trouvé {len(historiques)} historiques pour le colis {colis_id}")
     return historiques
