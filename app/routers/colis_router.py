@@ -1,10 +1,3 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from app.services.colis_service import create_colis , update_colis
-from app.schemas.colis_schema import ColisCreate, ColisResponse , ColisUpdate
-from app.core.database import get_db
-
-
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -12,15 +5,11 @@ from app.core.database import get_db
 from app.schemas.colis_schema import ColisCreate, ColisResponse, ColisUpdate, ColisAssign
 from app.services import colis_service
 
-router = APIRouter(prefix='/colis' , tags=['colis'])
+router = APIRouter(prefix='/colis', tags=['colis'])
 
-@router.post('/', response_model=ColisResponse) # j'ai ajouté le response_model ici ---> bouchra
-def update_colis(colis : ColisCreate , db : Session = Depends(get_db)):
-    return create_colis(db = db ,  colis = colis)
-
-@router.patch('/id')
-def update_colis(colis : ColisUpdate , db : Session = Depends(get_db)):
-    return update_colis(db = db , colis= colis)
+@router.post('/', response_model=ColisResponse)
+def create_colis_endpoint(colis: ColisCreate, db: Session = Depends(get_db)):
+    return colis_service.create_colis(db=db, colis=colis)
 
 @router.get("/", response_model=List[ColisResponse])
 def read_colis(

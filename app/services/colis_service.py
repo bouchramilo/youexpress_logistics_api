@@ -29,9 +29,6 @@ def create_colis(db: Session, colis: ColisCreate):
     db.commit()
     db.refresh(db_colis)
     
-    # ###############################################""
-    # cette partie pour l'ajout automatique de historique lors la crééation de colis
-    # Créer automatiquement un historique avec le statut "CREE"
     historique = HistoriqueStatut(
         ancien_statut=None,
         nouveau_statut="CREE",
@@ -40,18 +37,18 @@ def create_colis(db: Session, colis: ColisCreate):
     )
     db.add(historique)
     db.commit()
-    # ###############################################""
     
     return db_colis
 
 
-def update_colis(db : Session , colis_id : int ,  colis : ColisUpdate):
+def update_colis(db: Session, colis_id: int, colis_update: ColisUpdate):
     db_colis = db.query(Colis).filter(Colis.id == colis_id).first()
     if not db_colis:
         raise BusinessException("COLIS_NOT_FOUND", f"Colis avec l'id {colis_id} n'existe pas")
-    update_data = colis.model_dump(exclude_unset=True)
-    for key , value in update_data:
-        setattr(db_colis , key , value)
+    
+    update_data = colis_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_colis, key, value)
     
     db.commit()
     db.refresh(db_colis)
@@ -75,19 +72,6 @@ def get_colis_by_id(db: Session, colis_id: int):
         raise BusinessException("COLIS_NOT_FOUND", f"Colis avec l'id {colis_id} n'existe pas")
     return db_colis
 
-def update_colis(db: Session, colis_id: int, colis_update: ColisUpdate):
-    db_colis = db.query(Colis).filter(Colis.id == colis_id).first()
-    if not db_colis:
-        raise BusinessException("COLIS_NOT_FOUND", f"Colis avec l'id {colis_id} n'existe pas")
-    
-    update_data = colis_update.model_dump(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(db_colis, key, value)
-    
-    db.commit()
-    db.refresh(db_colis)
-    return db_colis
-
 def assign_livreur_to_colis(db: Session, colis_id: int, livreur_id: int):
     db_colis = db.query(Colis).filter(Colis.id == colis_id).first()
     if not db_colis:
@@ -98,6 +82,10 @@ def assign_livreur_to_colis(db: Session, colis_id: int, livreur_id: int):
     
     db_colis.livreur_id = livreur_id
     db_colis.statut = "EN_TRANSIT" 
+    
+    db.commit()
+    db.refresh(db_colis)
+    return db_colis 
     
     db.commit()
     db.refresh(db_colis)
