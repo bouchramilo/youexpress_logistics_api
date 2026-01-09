@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
-from app.models.gestionaire import Gestionaire  # Make sure this matches your model filename
+from app.models.gestionaire import Gestionaire
 from app.schemas.gestionaire_schema import GestionaireCreate
 from app.core.exceptions import BusinessException
+from typing import List
 
 def create_gestionaire(db: Session, gestionaire_data: GestionaireCreate):
     if not gestionaire_data.nom:
@@ -29,3 +30,12 @@ def create_gestionaire(db: Session, gestionaire_data: GestionaireCreate):
 
 def get_gestionaire_by_email(db: Session, email: str):
     return db.query(Gestionaire).filter(Gestionaire.email == email).first()
+
+def get_all_gestionaires(db: Session, skip: int = 0, limit: int = 100) -> List[Gestionaire]:
+    return db.query(Gestionaire).offset(skip).limit(limit).all()
+
+def get_gestionaire_by_id(db: Session, gestionaire_id: int) -> Gestionaire:
+    db_gestionaire = db.query(Gestionaire).filter(Gestionaire.id == gestionaire_id).first()
+    if not db_gestionaire:
+        raise BusinessException("GESTIONAIRE_NOT_FOUND", f"Gestionnaire avec l'id {gestionaire_id} n'existe pas")
+    return db_gestionaire
